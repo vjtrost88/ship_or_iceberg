@@ -16,7 +16,7 @@ The satellite used to acquire these images is called the Sentinel-1. It orbits 6
 
 It uses a "C-Band" radar mechanism to generate images based on the energy that bounces back from the objects in the sea (backscatter). It can generate images regardless of rain, fog, night, or day.  
 
-High winds will correlate to a brighter background while low winds will correlate to a darker background. Another thing that can influence the background is the incidence angle at which the radar hits the Earth. The Sentinel-1 shoots its radar signals at an angle to the Earth. See the figure below:  
+High winds will correlate to a brighter background while low winds will correlate to a darker background. Another thing that can influence the background is the **incidence angle** at which the radar hits the Earth. The Sentinel-1 shoots its radar signals at an angle to the Earth. See the figure below:  
 
 ![](https://github.com/vjtrost88/ship_or_iceberg/blob/master/Resources/incidenceAngle.jpg)
 
