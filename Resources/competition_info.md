@@ -18,4 +18,16 @@ It uses a "C-Band" radar mechanism to generate images based on the energy that b
 
 High winds will correlate to a brighter background while low winds will correlate to a darker background. Another thing that can influence the background is the incidence angle at which the radar hits the Earth. The Sentinel-1 shoots its radar signals at an angle to the Earth. See the figure below:  
 
-![]()
+![](https://github.com/vjtrost88/ship_or_iceberg/blob/master/Resources/incidenceAngle.jpg)
+
+The radar can transmit and receive energy through the horizontal and vertical planes. Get get the data in 2 channels:
+- `Band_1` which is HH (transmit and receive horizontally)
+- `Band_2` which is HV (transmit horizontally and receive vertically)  
+
+This can produce slightly different images.
+
+Just to see what we're working with, here are 2 examples images, each with their titles denoting their respective labels.  
+
+![](https://github.com/vjtrost88/ship_or_iceberg/blob/master/Resources/iceberg.png)
+
+![](https://github.com/vjtrost88/ship_or_iceberg/blob/master/Resources/notIceberg.png)
