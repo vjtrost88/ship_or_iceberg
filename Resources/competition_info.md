@@ -31,3 +31,5 @@ Just to see what we're working with, here are 2 examples images, each with their
 ![](https://github.com/vjtrost88/ship_or_iceberg/blob/master/Resources/iceberg.png)
 
 ![](https://github.com/vjtrost88/ship_or_iceberg/blob/master/Resources/notIceberg.png)
+
+As you can see, the images are VERY pixelated. It is going to be a challenge to distinguish icebergs from ships. I figure there will need to be some crafty feature engineering to try and find some hidden features that can help separate the classes. 
