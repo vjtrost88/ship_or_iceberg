@@ -14,19 +14,28 @@ Statoil, an international energy company operating worldwide, has worked closely
 
 Sanchit and I hope to develop a representation learning model that can accurately classify these images. Let's see if we can take a look at them and perform some EDA.  
 
-### Load in Dependencies  
-
-```{r, message=FALSE}
-library(data.table)
-library(rjson)
-```
-
 ### Read in Data  
 
-The files are in JSON format, so they're a little more interesting to deal with. Here we shall try to convert the JSON file to a data.table/frame.  
+The files are in JSON format, so they're a little more interesting to deal with. Here we shall convert the JSON file to a data.table/frame.  
 
 
 ```{r}
-
+library(rjson)
+train <- file("Data/train.json")
+train <- readLines(train, -1L)
+train <- lapply(X=train, fromJSON)
 ```
+
+### Plot Image  
+
+```{r}
+#get a single band from an image
+img <- as.matrix(train[[1]][[1]]$band_1)
+#the matrix is a 1 column matrix because they were given to us as flattened matrices. Unflatten them
+dim(img) <- c(75, 75)
+#plot image
+image(img, main="NOT an Iceberg")
+```
+
+### Preprocess 
 
