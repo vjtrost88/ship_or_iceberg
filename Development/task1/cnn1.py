@@ -13,7 +13,7 @@ import os
 np.random.seed(1234)
 
 #read in the data
-DATA_DIR = "Data/"
+DATA_DIR = "../../Data/"
 
 train_raw = open(DATA_DIR + "train.json", "r").read()
 train = json.loads(train_raw)

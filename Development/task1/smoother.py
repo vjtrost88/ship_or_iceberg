@@ -41,6 +41,8 @@ X_train = np.concatenate([X_band1[:, :, :, np.newaxis]
                           , X_band2[:, :, :, np.newaxis]
                          , X_band3[:, :, :, np.newaxis]], axis=-1)
 
+X_train = X_train.reshape(X_train.shape[0], 73, 73, 1)
+
 #do the same for the test set
 X_band_test_1 = np.array([np.array(band).astype(np.float32).reshape(75, 75) for band in test["band_1"]])
 X_band_test_2 = np.array([np.array(band).astype(np.float32).reshape(75, 75) for band in test["band_2"]])
@@ -55,11 +57,24 @@ X_test = np.concatenate([X_band_test_1[:, :, :, np.newaxis]
                           , X_band_test_2[:, :, :, np.newaxis]
                          , X_band_test_3[:, :, :, np.newaxis]], axis=-1)
 
-#sanity test
-fig = plt.figure(1, figsize=(15, 15))
-for i in range(9):
-    ax = fig.add_subplot(3, 3, i+1)
-    arr = X_band3[i]
-    ax.imshow(arr, cmap='inferno')
+X_test = X_test.reshape(X_test.shape[0], 73, 73, 1)
 
-plt.show()
+#fix the labels
+target_train = np_utils.to_categorical(target_train, 2)
+
+
+#build the model
+model = Sequential()
+model.add(Dense(128, activation='relu', input_shape=(73, 73, 1)))
+model.add(Dense(2, activation='sigmoid'))
+
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+model.fit(X_train, target_train, batch_size=802, epochs=10, verbose=1)
+
+preds = model.predict(X_test)
+scores = [preds[x][1] for x in range(len(preds))]
+
+submission = pd.DataFrame()
+submission['id'] = test['id']
+submission['is_iceberg'] = scores
+submission.to_csv('preds_smooth.csv', index=False)
