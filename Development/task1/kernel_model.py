@@ -6,8 +6,8 @@
 import numpy as np
 import pandas as pd
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten
-from keras.layers import Convolution2D, MaxPooling2D
+from keras.layers import Dense, Dropout, Activation, Flatten, MaxPooling2D
+from keras.layers import Convolution2D as Conv2D
 from keras.utils import np_utils, multi_gpu_model
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
 from keras.optimizers import Adam
@@ -109,8 +109,8 @@ def getModel():
 
     optimizer = Adam(lr=0.001, decay=0.0)
 
-    parallel_model = multi_gpu_model(model, gpus=3)
-    parallel_model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+    #parallel_model = multi_gpu_model(model, gpus=3)
+    model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
     return model
 
@@ -118,7 +118,7 @@ def getModel():
 
 def main():
     #read in data
-    df_train = pd.read_json('../Data/train.json')
+    df_train = pd.read_json('../../Data/train.json')
 
     #get scaled images as one big array
     Xtrain = get_scaled_imgs(df_train)
@@ -147,26 +147,31 @@ def main():
     mcp_save = ModelCheckpoint('.mdl_wts.hdf5', save_best_only=True, monitor='val_loss', mode='min')
     reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=7, verbose=1, epsilon=1e-4, mode='min')
 
+    #combine the callback parameters
+    callbacks = [earlyStopping, mcp_save, reduce_lr_loss]
+
     #fit the model, save the verbose output and other things
-    history = model.fit(Xtr_more, Ytr_more, batch_size=batch_size, epochs=50, verbose=1, callbacks=[earlyStopping, mcp_save, reduce_lr_loss], validation_split=0.25)
+    history = model.fit(Xtr_more, Ytr_more, batch_size=batch_size, epochs=50, verbose=1, callbacks=callbacks, validation_split=0.25)
 
     print(history.history.keys())
     #
-    fig = plt.figure()
-    plt.plot(history.history['acc'])
-    plt.plot(history.history['val_acc'])
-    plt.title('model accuracy')
-    plt.ylabel('accuracy')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    plt.title('model loss')
-    plt.ylabel('loss')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='lower left')
+    #plt.plot(history.history['acc'])
+    #plt.plot(history.history['val_acc'])
+    #plt.title('model accuracy')
+    #plt.ylabel('accuracy')
+    #plt.xlabel('epoch')
+    #plt.legend(['train', 'test'], loc='upper left')
+    #plt.plot(history.history['loss'])
+    #plt.plot(history.history['val_loss'])
+    #plt.title('model loss')
+    #plt.ylabel('loss')
+    #plt.xlabel('epoch')
+    #plt.legend(['train', 'test'], loc='lower left')
     #
-    fig.savefig('performance.png')
+    #plt.show()
+    #fig = plt.figure()
+    #fig.savefig('performance.png')
+
 
     model.load_weights(filepath = '.mdl_wts.hdf5')
 
@@ -174,7 +179,15 @@ def main():
     print('Train score:', score[0])
     print('Train accuracy:', score[1])
 
+    df_test = pd.read_json('../../Data/test.json')
+    df_test.inc_angle = df_test.inc_angle.replace('na',0)
+    Xtest = (get_scaled_imgs(df_test))
+    pred_test = model.predict(Xtest)
 
+    submission = pd.DataFrame({'id': df_test["id"], 'is_iceberg': pred_test.reshape((pred_test.shape[0]))})
+    print(submission.head(10))
+
+    submission.to_csv('kernel_submission.csv', index=False)
 
 
 if __name__ == '__main__':
