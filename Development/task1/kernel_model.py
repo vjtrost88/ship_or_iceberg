@@ -20,7 +20,7 @@ import json
 import os
 np.random.seed(1234)
 
-
+#os.environ["CUDA_VISIBLE_DEVICES"]="3"
 
 def get_scaled_imgs(df):
     imgs = []
@@ -117,6 +117,9 @@ def getModel():
 
 
 def main():
+    #CHOOSE WHICH GPU TO USE :)) 
+    os.environ['CUDA_VISIBLE_DEVICES']='3'
+
     #read in data
     df_train = pd.read_json('../../Data/train.json')
 
@@ -154,24 +157,6 @@ def main():
     history = model.fit(Xtr_more, Ytr_more, batch_size=batch_size, epochs=50, verbose=1, callbacks=callbacks, validation_split=0.25)
 
     print(history.history.keys())
-    #
-    #plt.plot(history.history['acc'])
-    #plt.plot(history.history['val_acc'])
-    #plt.title('model accuracy')
-    #plt.ylabel('accuracy')
-    #plt.xlabel('epoch')
-    #plt.legend(['train', 'test'], loc='upper left')
-    #plt.plot(history.history['loss'])
-    #plt.plot(history.history['val_loss'])
-    #plt.title('model loss')
-    #plt.ylabel('loss')
-    #plt.xlabel('epoch')
-    #plt.legend(['train', 'test'], loc='lower left')
-    #
-    #plt.show()
-    #fig = plt.figure()
-    #fig.savefig('performance.png')
-
 
     model.load_weights(filepath = '.mdl_wts.hdf5')
 
