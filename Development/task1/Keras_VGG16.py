@@ -95,7 +95,7 @@ def getVggModel():
 #Base CV Structure
 def get_callbacks():
     earlyStopping = EarlyStopping(monitor='val_loss', patience=10, verbose=0, mode='min')
-    mcp_save = ModelCheckpoint(filepath, save_best_only=True, monitor='val_loss', mode='min')
+    mcp_save = ModelCheckpoint('.mdl_wts_VGG16.hdf5', save_best_only=True, monitor='val_loss', mode='min')
     reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=7, verbose=1, epsilon=1e-4, mode='min')
     return [earlyStopping, mcp_save, reduce_lr_loss]
 
@@ -186,6 +186,8 @@ def main():
                              callbacks = callbacks)
 
     print(history.history.keys())
+
+    model.load_weights(filepath = '.mdl_wts_VGG16.hdf5')
 
     score = model.evaluate(Xtrain, Ytrain, verbose=1)
     print('Train score:', score[0])
